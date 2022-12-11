@@ -3,5 +3,9 @@
 </p>
 <hr>
 
+<p align="center">
+    <a href="#"><img src="https://github.com/privateterraformregistry/privateterraformregistry/actions/workflows/go.yml/badge.svg" /></a>
+</p>
+
 :warning: 
 This project is currently in development and should not be used in production.
