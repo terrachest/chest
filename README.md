@@ -1,1 +1,1 @@
-# privateterraformregistry
+# Private Terraform Registry
