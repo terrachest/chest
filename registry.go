@@ -9,6 +9,8 @@ import (
 )
 
 func serviceDiscoveryHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	
 	type serviceDiscovery struct {
 		ModulePath string `json:"modules.v1"`
 	}
@@ -19,6 +21,8 @@ func serviceDiscoveryHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func listAvailableVersions(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	type version struct {
 		Version string `json:"version"`
 	}
@@ -45,10 +49,17 @@ func getDownloadPath(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(204) // No Content
 }
 
+func uploadTerraformModule(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/.well-known/terraform.json", serviceDiscoveryHandler)
 	router.HandleFunc("/v1/{namespace}/{name}/{system}/versions", listAvailableVersions)
 	router.HandleFunc("/v1/{namespace}/{name}/{system}/{version}/download", getDownloadPath)
+
+	router.HandleFunc("/", uploadTerraformModule)
+
 	log.Fatal(http.ListenAndServe(":8080", router))
 }

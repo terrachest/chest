@@ -19,6 +19,10 @@ func TestServiceDiscovery(t *testing.T) {
 ` {
 		t.Errorf(`expected {"modules.v1":"/terraform/modules/v1/"} got %v`, string(data))
 	}
+	header := res.Header.Get(`Content-Type`)
+	if string(header) != "application/json" {
+		t.Errorf(`expected Content-Type: application/json got Content-Type: %v`, header)
+	}
 }
 
 func TestListAvailableVersions(t *testing.T) {
@@ -32,6 +36,10 @@ func TestListAvailableVersions(t *testing.T) {
 	if string(data) != `{"modules":[{"versions":[{"version":"1.0.0"},{"version":"1.1.0"},{"version":"2.0.0"}]}]}
 ` {
 		t.Errorf(`expected {"modules":[{"versions":[{"version":"1.0.0"},{"version":"1.1.0"},{"version":"2.0.0"}]}]} got %v`, string(data))
+	}
+	header := res.Header.Get(`Content-Type`)
+	if string(header) != "application/json" {
+		t.Errorf(`expected Content-Type: application/json got Content-Type: %v`, header)
 	}
 }
 
