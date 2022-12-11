@@ -50,8 +50,8 @@ func TestGetDownloadPath(t *testing.T) {
 	getDownloadPath(w, req)
 	res := w.Result()
 	defer res.Body.Close()
-	header := res.Header.Get(`https://api.github.com/repos/hashicorp/terraform-aws-consul/tarball/v0.0.1//*?archive=tar.gz`)
-	if string(header) != "" {
+	header := res.Header.Get("X-Terraform-Get")
+	if string(header) != "https://api.github.com/repos/hashicorp/terraform-aws-consul/tarball/v0.0.1//*?archive=tar.gz" {
 		t.Errorf(`expected https://api.github.com/repos/hashicorp/terraform-aws-consul/tarball/v0.0.1//*?archive=tar.gz got %v`, header)
 	}
 	if res.StatusCode != 204 {
