@@ -1,5 +1,6 @@
 <p align="center">
-	<a href="#"><img src="https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero.jpg" alt="Caddy" width="450"></a>
+	<a href="#"><img src="https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero.jpg#gh-light-mode-only" alt="Caddy" width="450"></a>
+	<a href="#"><img src="https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero-dark.png#gh-dark-mode-only" alt="Caddy" width="450"></a>
 </p>
 <hr>
 
