@@ -1,7 +1,5 @@
-<p align="center">
 ![Fancy Hero](https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero.jpg#gh-light-mode-only)
 ![Fancy Hero](https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero-dark.png#gh-dark-mode-only)
-</p>
 
 <hr>
 
