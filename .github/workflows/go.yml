@@ -24,10 +24,7 @@ jobs:
     - name: Build
       run: go build -v ./...
 
-    - name: Set Env
-      run: echo "DATA_DIR=${GITHUB_WORKSPACE}/testdata" >> $GITHUB_OUTPUT
-
     - name: Test
-      run: go test -v ./...
+      run: export DATA_DIR=${GITHUB_WORKSPACE}/testdata && go test -v ./...
       env:
         DATA_DIR: ${GITHUB_WORKSPACE}/testdata
