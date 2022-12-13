@@ -11,6 +11,8 @@
 <strong>This project is currently in development and should not be used in production.</strong>
 </p>
 
+## What is it?
+
 A private registry you can publish your Terraform modules too. Initially created to manage terraform modules in a mono repo, the roadmap for this project now includes an S3 backend and implementing the terraform login protocol.
 
 ## Quickstart
@@ -21,7 +23,6 @@ todo.
 
 To add a module to the registry, you must compress the directory containing your module.
 
-Compress module:
 ```
 tar -czf file.tar.gz tfmodule
 ```
