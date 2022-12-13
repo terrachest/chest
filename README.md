@@ -1,5 +1,10 @@
-![Fancy Hero](https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero.jpg#gh-light-mode-only)
-![Fancy Hero](https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero-dark.png#gh-dark-mode-only)
+<p align="center">
+    <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero-dark">
+        <source media="(prefers-color-scheme: light)" srcset="https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero.jpg)">
+        <img src="https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero.jpg" alt="Caddy" width="450">
+    </picture>
+</p>
 
 <hr>
 
