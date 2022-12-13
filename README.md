@@ -7,19 +7,40 @@
     <a href="#"><img src="https://github.com/privateterraformregistry/privateterraformregistry/actions/workflows/go.yml/badge.svg" /></a>
 </p>
 
-:warning: 
-This project is currently in development and should not be used in production.
+<p align="center">
+<strong>This project is currently in development and should not be used in production.</strong>
+</p>
 
-## Add a Terraform Module
+A private registry you can publish your Terraform modules too. Initially created to manage terraform modules in a mono repo, the roadmap for this project now includes an S3 backend and implementing the terraform login protocol.
 
-Compress terraform module:
+## Quickstart
+
+todo.
+
+### Add a Terraform Module
+
+To add a module to the registry, you must compress the directory containing your module.
+
+Compress module:
 ```
 tar -czf file.tar.gz tfmodule
 ```
 
-Add to registry:
+Once you have compressed your module, you can publish it to the private terraform registry by sending an HTTP request to the registry endpoint.
+
+Example of POSTing a module to the private terraform registry:
 ```
 curl -X POST \
     -F 'module=@file.tar.gz' \
     https://your.url/modules/hashicorp/consul/aws/1.1.0
 ```
+
+## Development
+
+Running ```./run.sh``` will run the registry. 
+
+[!warning] Terraform CLI operates over HTTPS, to use HTTPS locally you can use a tool such as NGROK to front your private registry server.
+
+## Testing
+
+Running ```./run.sh``` will run the tests for the registry.
