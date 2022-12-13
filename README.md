@@ -13,7 +13,7 @@
 
 ## What is it?
 
-A private registry you can publish your Terraform modules too. Initially created to manage terraform modules in a mono repo, the roadmap for this project now includes an S3 backend and implementing the terraform login protocol.
+A private registry you can publish your Terraform modules too. Initially created to manage terraform modules in a mono repo, the roadmap for this project now includes a S3 backend and implementing the terraform login protocol.
 
 ## Quickstart
 
