@@ -27,7 +27,7 @@ type downloader struct {
 }
 
 func (downloader *downloader) Download(w http.ResponseWriter, r *http.Request, m modules.Module) error {
-	w.Header().Set("Content-Disposition", "attachment; filename=WHATEVER_YOU_WANT")
+	w.Header().Set("Content-Disposition", "attachment; filename=FILE_X")
 	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
 
 	var fileName = fmt.Sprintf("%s.%s.%s.%s.tar.gz", m.Namespace, m.Name, m.System, m.Version)

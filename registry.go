@@ -125,19 +125,35 @@ func uploadModule(ms *modules.Modules, dm datamanager.DataManager) func(w http.R
 	}
 }
 
-func downloadModule(w http.ResponseWriter, r *http.Request) {
-	d := downloader.New(&downloader.Config{
-		DataDir: dataDir,
-	})
-	err := d.Download(w, r, modules.Module{
-		Namespace: "hashicorp",
-		Name:      "consul",
-		System:    "aws",
-		Version:   "1.1.0",
-	})
+func downloadModule(ms *modules.Modules) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		d := downloader.New(&downloader.Config{
+			DataDir: dataDir,
+		})
 
-	if err != nil {
-		log.Fatal(err)
+		m := modules.Module{
+			Namespace: vars["Namespace"],
+			Name:      vars["Name"],
+			System:    vars["System"],
+			Version:   vars["Version"],
+		}
+
+		if !ms.Exists(m) {
+			w.WriteHeader(404)
+			_, err := w.Write([]byte("File not found."))
+
+			if err != nil {
+				log.Fatal(err)
+			}
+			return
+		}
+
+		err := d.Download(w, r, m)
+
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
