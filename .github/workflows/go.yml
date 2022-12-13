@@ -27,4 +27,4 @@ jobs:
     - name: Test
       run: go test -v ./...
       env:
-        DATA_DIR: $(pwd)/testdata
+        DATA_DIR: ${GITHUB_WORKSPACE}/testdata
