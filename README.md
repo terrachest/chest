@@ -1,7 +1,7 @@
 <p align="center">
     <picture>
         <source media="(prefers-color-scheme: dark)" srcset="https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero-dark.png">
-        <source media="(prefers-color-scheme: light)" srcset="https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero.jpg)">
+        <source media="(prefers-color-scheme: light)" srcset="https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero.jpg">
         <img src="https://github.com/privateterraformregistry/privateterraformregistry/raw/main/assets/ptrhero.jpg" alt="Caddy" width="450">
     </picture>
 </p>
