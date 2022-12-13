@@ -45,7 +45,8 @@ curl -X POST \
 
 Running ```./run.sh``` will run the registry. 
 
-[!warning] Terraform CLI operates over HTTPS, to use HTTPS locally you can use a tool such as NGROK to front your private registry server.
+> **Note**
+> Terraform CLI operates over HTTPS, to use HTTPS locally you can use a tool such as NGROK to front your private registry server.
 
 ## Testing
 
