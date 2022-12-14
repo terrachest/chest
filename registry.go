@@ -187,7 +187,7 @@ func main() {
 	router.HandleFunc("/terraform/modules/v1/{namespace}/{name}/{system}/versions", listAvailableVersions(ms)) // terraform module protocol
 	router.HandleFunc("/terraform/modules/v1/{namespace}/{name}/{system}/{version}/download", getDownloadPath) // terraform module protocol
 	router.HandleFunc("/modules/{namespace}/{name}/{system}/{version}", uploadModule(&ms, dm))
-	router.HandleFunc("/modules/{filename}", downloadModule)
+	router.HandleFunc("/modules/{filename}", downloadModule(&ms))
 
 	log.Print("Server Ready")
 	log.Fatal(http.ListenAndServe(":8080", router))
