@@ -36,7 +36,13 @@ func (manager *dataManager) Load() error {
 		return err
 	}
 
-	err = json.Unmarshal(data, &manager.modules)
+	if data == nil {
+		return nil
+	}
+
+	if data != nil {
+		err = json.Unmarshal(data, &manager.modules)
+	}
 
 	if err != nil {
 		return err
@@ -66,10 +72,10 @@ func (manager *dataManager) readFile() ([]byte, error) {
 			}
 
 			err = manager.writeFile(data)
-
 			if err != nil {
 				return nil, err
 			}
+			return nil, nil
 		}
 		return nil, err
 	}
@@ -77,26 +83,23 @@ func (manager *dataManager) readFile() ([]byte, error) {
 }
 
 func (manager *dataManager) writeFile(data []byte) error {
-	tmpfile, err := ioutil.TempFile(manager.config.DataDir, "tmp_registry_data")
-	if err != nil {
-		return err
-	}
-	_, err = tmpfile.Write(data)
-	if err != nil {
-		return err
-	}
-
-	err = tmpfile.Sync()
-	if err != nil {
-		return err
-	}
-	newFile, err := os.OpenFile(manager.config.DataDir+"/modules.json", os.O_WRONLY|os.O_CREATE, 0666)
+	tmpFile, err := ioutil.TempFile(manager.config.DataDir, "tmp_registry_data")
 
 	if err != nil {
 		return err
 	}
 
-	defer newFile.Close()
+	_, err = tmpFile.Write(data)
 
-	return os.Rename(tmpfile.Name(), manager.config.DataDir+"/modules.json")
+	if err != nil {
+		return err
+	}
+
+	err = tmpFile.Sync()
+
+	if err != nil {
+		return err
+	}
+
+	return os.Rename(tmpFile.Name(), manager.config.DataDir+"/modules.json")
 }

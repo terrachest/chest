@@ -1,15 +1,13 @@
 package downloader
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"os"
-	"privateterraformregistry/internal/modules"
 )
 
 type Downloader interface {
-	Download(w http.ResponseWriter, r *http.Request, m modules.Module) error
+	Download(w http.ResponseWriter, r *http.Request, fn string) error
 }
 
 func New(c *Config) Downloader {
@@ -26,12 +24,11 @@ type downloader struct {
 	config *Config
 }
 
-func (downloader *downloader) Download(w http.ResponseWriter, r *http.Request, m modules.Module) error {
+func (downloader *downloader) Download(w http.ResponseWriter, r *http.Request, fn string) error {
 	w.Header().Set("Content-Disposition", "attachment; filename=FILE_X")
 	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
 
-	var fileName = fmt.Sprintf("%s.%s.%s.%s.tar.gz", m.Namespace, m.Name, m.System, m.Version)
-	var filePath = downloader.config.DataDir + "/" + fileName
+	var filePath = downloader.config.DataDir + "/" + fn
 	fileToCopy, err := os.OpenFile(filePath, os.O_RDONLY, 0666)
 
 	if err != nil {

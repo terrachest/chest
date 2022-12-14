@@ -32,7 +32,7 @@ func getServiceDiscovery(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func listAvailableVersions(ms modules.Modules) func(w http.ResponseWriter, r *http.Request) {
+func listAvailableVersions(ms *modules.Modules) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 		namespace := vars["namespace"]
@@ -67,7 +67,7 @@ func listAvailableVersions(ms modules.Modules) func(w http.ResponseWriter, r *ht
 		w.Header().Set("Content-Type", "application/json")
 		err := json.NewEncoder(w).Encode(p)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}
 }
@@ -85,7 +85,7 @@ func uploadModule(ms *modules.Modules, dm datamanager.DataManager) func(w http.R
 			w.WriteHeader(405)
 			_, err := w.Write([]byte("Method Not Allowed"))
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
 			}
 			return
 		}
@@ -101,7 +101,7 @@ func uploadModule(ms *modules.Modules, dm datamanager.DataManager) func(w http.R
 		var err = m.Validate()
 
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 			return
 		}
 
@@ -112,15 +112,17 @@ func uploadModule(ms *modules.Modules, dm datamanager.DataManager) func(w http.R
 		err = u.Upload(r, m)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 			return
 		}
 
 		ms.Add(m)
 		err = dm.Save()
 
+		log.Println(ms)
+
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}
 }
@@ -132,27 +134,23 @@ func downloadModule(ms *modules.Modules) func(w http.ResponseWriter, r *http.Req
 			DataDir: dataDir,
 		})
 
-		m := modules.Module{
-			Namespace: vars["Namespace"],
-			Name:      vars["Name"],
-			System:    vars["System"],
-			Version:   vars["Version"],
-		}
+		fn := vars["fileName"]
 
-		if !ms.Exists(m) {
-			w.WriteHeader(404)
-			_, err := w.Write([]byte("File not found."))
+		//if !ms.Exists(m) {
+		//	w.WriteHeader(404)
+		//	_, err := w.Write([]byte("File not found."))
+		//
+		//	if err != nil {
+		//		log.Println(err)
+		//	}
+		//	return
+		//}
 
-			if err != nil {
-				log.Fatal(err)
-			}
-			return
-		}
-
-		err := d.Download(w, r, m)
+		err := d.Download(w, r, fn)
 
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return
 		}
 	}
 }
@@ -170,7 +168,7 @@ func main() {
 	var err = dm.Load()
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	router := mux.NewRouter().StrictSlash(true)
@@ -183,11 +181,11 @@ func main() {
 		})
 	})
 
-	router.HandleFunc("/.well-known/terraform.json", getServiceDiscovery)                                      // terraform protocol
-	router.HandleFunc("/terraform/modules/v1/{namespace}/{name}/{system}/versions", listAvailableVersions(ms)) // terraform module protocol
-	router.HandleFunc("/terraform/modules/v1/{namespace}/{name}/{system}/{version}/download", getDownloadPath) // terraform module protocol
+	router.HandleFunc("/.well-known/terraform.json", getServiceDiscovery)                                       // terraform protocol
+	router.HandleFunc("/terraform/modules/v1/{namespace}/{name}/{system}/versions", listAvailableVersions(&ms)) // terraform module protocol
+	router.HandleFunc("/terraform/modules/v1/{namespace}/{name}/{system}/{version}/download", getDownloadPath)  // terraform module protocol
 	router.HandleFunc("/modules/{namespace}/{name}/{system}/{version}", uploadModule(&ms, dm))
-	router.HandleFunc("/modules/{filename}", downloadModule(&ms))
+	router.HandleFunc("/modules/{fileName}", downloadModule(&ms))
 
 	log.Print("Server Ready")
 	log.Fatal(http.ListenAndServe(":8080", router))

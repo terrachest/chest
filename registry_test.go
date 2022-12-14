@@ -39,7 +39,7 @@ func TestListAvailableVersions(t *testing.T) {
 	}
 	r = mux.SetURLVars(r, vars)
 
-	listAvailableVersions(modules.Modules{
+	listAvailableVersions(&modules.Modules{
 		Modules: []modules.Module{
 			{Namespace: "hashicorp", System: "consul", Name: "aws", Version: "1.0.0"},
 			{Namespace: "hashicorp", System: "consul", Name: "aws", Version: "1.1.0"},
