@@ -39,3 +39,7 @@ func TestAddCannotAddDuplicateModule(t *testing.T) {
 		t.Error("Duplicate modules")
 	}
 }
+
+func FuzzModule_Validate(f *testing.F) {
+
+}

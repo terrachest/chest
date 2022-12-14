@@ -50,4 +50,4 @@ Running ```./run.sh``` will run the registry.
 
 ## Testing
 
-Running ```./run.sh``` will run the tests for the registry.
+Running ```./test.sh``` will run the tests for the registry.
