@@ -2,15 +2,20 @@ package datamanager
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"privateterraformregistry/internal/modules"
 )
 
+const (
+	tmpFileName  = "tmp_registry_data"
+	dataFileName = "/modules.json"
+)
+
 type DataManager interface {
-	Load() error
-	Save() error
+	Load(ms *modules.Modules) error
+	Persist(ms modules.Modules) error
 }
 
 type Config struct {
@@ -18,19 +23,17 @@ type Config struct {
 }
 
 type dataManager struct {
-	modules *modules.Modules
-	config  *Config
+	config *Config
 }
 
-func New(c *Config, ms *modules.Modules) DataManager {
+func New(c *Config) DataManager {
 	return &dataManager{
-		config:  c,
-		modules: ms,
+		config: c,
 	}
 }
 
-func (manager *dataManager) Load() error {
-	data, err := manager.readFile()
+func (manager *dataManager) Load(ms *modules.Modules) error {
+	data, err := manager.readFile(ms)
 
 	if err != nil {
 		return err
@@ -40,19 +43,11 @@ func (manager *dataManager) Load() error {
 		return nil
 	}
 
-	if data != nil {
-		err = json.Unmarshal(data, &manager.modules)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return json.Unmarshal(data, ms)
 }
 
-func (manager *dataManager) Save() error {
-	data, err := json.Marshal(manager.modules)
+func (manager *dataManager) Persist(ms modules.Modules) error {
+	data, err := json.Marshal(ms)
 
 	if err != nil {
 		return err
@@ -61,17 +56,18 @@ func (manager *dataManager) Save() error {
 	return manager.writeFile(data)
 }
 
-func (manager *dataManager) readFile() ([]byte, error) {
-	file, err := os.Open(manager.config.DataDir + "/modules.json")
+func (manager *dataManager) readFile(ms *modules.Modules) ([]byte, error) {
+	file, err := os.Open(manager.config.DataDir + dataFileName)
 	if err != nil {
 		if os.IsNotExist(err) {
-			data, err := json.Marshal(manager.modules)
+			data, err := json.Marshal(ms)
 
 			if err != nil {
 				return nil, err
 			}
 
 			err = manager.writeFile(data)
+
 			if err != nil {
 				return nil, err
 			}
@@ -79,11 +75,11 @@ func (manager *dataManager) readFile() ([]byte, error) {
 		}
 		return nil, err
 	}
-	return ioutil.ReadAll(file)
+	return io.ReadAll(file)
 }
 
 func (manager *dataManager) writeFile(data []byte) error {
-	tmpFile, err := ioutil.TempFile(manager.config.DataDir, "tmp_registry_data")
+	tmpFile, err := os.CreateTemp(manager.config.DataDir, tmpFileName)
 
 	if err != nil {
 		return err
@@ -101,5 +97,5 @@ func (manager *dataManager) writeFile(data []byte) error {
 		return err
 	}
 
-	return os.Rename(tmpFile.Name(), manager.config.DataDir+"/modules.json")
+	return os.Rename(tmpFile.Name(), manager.config.DataDir+dataFileName)
 }

@@ -5,11 +5,11 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"privateterraformregistry/internal/modules"
+	"privateterraformregistry/internal/module"
 )
 
 type Uploader interface {
-	Upload(r *http.Request, m modules.Module) error
+	Upload(r *http.Request, m module.Module) error
 }
 
 func New(c *Config) Uploader {
@@ -27,7 +27,7 @@ type uploader struct {
 	config *Config
 }
 
-func (uploader *uploader) Upload(r *http.Request, m modules.Module) error {
+func (uploader *uploader) Upload(r *http.Request, m module.Module) error {
 	r.ParseMultipartForm(uploader.config.MaxUploadSize)
 	file, _, err := r.FormFile("module")
 

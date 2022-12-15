@@ -1,4 +1,4 @@
-package downloader
+package env
 
 import "testing"
 

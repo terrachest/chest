@@ -1,31 +1,36 @@
 package modules
 
-type Module struct {
-	Namespace string
-	Name      string
-	System    string
-	Version   string
-}
+import "privateterraformregistry/internal/module"
 
 type Modules struct {
-	Modules []Module `json:"modules"`
+	modules []module.Module
 }
 
-func (ms *Modules) Exists(rhs Module) bool {
-	for _, lhs := range ms.Modules {
-		if lhs.Namespace == rhs.Namespace && lhs.System == rhs.System && lhs.Name == rhs.Name && lhs.Version == rhs.Version {
+func (modules *Modules) GetModules() []module.Module {
+	return modules.modules
+}
+
+func (modules *Modules) Exists(m module.Module) bool {
+	for _, x := range modules.modules {
+		if x.Namespace == m.Namespace && x.System == m.System && x.Name == m.Name && x.Version == m.Version {
 			return true
 		}
 	}
 	return false
 }
 
-func (ms *Modules) Add(m Module) {
-	if !ms.Exists(m) {
-		ms.Modules = append(ms.Modules, m)
+func (modules *Modules) Add(m module.Module) {
+	if !modules.Exists(m) {
+		modules.modules = append(modules.modules, m)
 	}
 }
 
-func (m *Module) Validate() error {
+func (modules *Modules) Validate() error {
+	for _, m := range modules.modules {
+		err := m.Validate()
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

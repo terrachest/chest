@@ -1,4 +1,4 @@
-package downloader
+package listavailableversions
 
 import "testing"
 

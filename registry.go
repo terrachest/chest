@@ -3,100 +3,86 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"os"
 	"privateterraformregistry/internal/datamanager"
 	"privateterraformregistry/internal/downloader"
+	"privateterraformregistry/internal/module"
+	"privateterraformregistry/internal/moduleprotocol"
 	"privateterraformregistry/internal/modules"
 	"privateterraformregistry/internal/uploader"
-
-	"github.com/gorilla/mux"
+	"privateterraformregistry/internal/utils/env"
 )
 
-var dataDir = os.Getenv("DATA_DIR")
+var dataDir = env.Get("DATA_DIR", "/.privateterraformregistry/data")
 
 const (
 	maxUploadSize = 32 << 20
 )
 
-func getServiceDiscovery(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+func main() {
+	ms := modules.Modules{}
+	dm := datamanager.New(&datamanager.Config{DataDir: dataDir})
+	err := dm.Load(&ms)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	r := gin.Default()
+	r.GET("/.well-known/terraform.json", getServiceDiscovery)
+	r.GET("/terraform/modules/v1/:namespace/:name/:system/versions", listAvailableVersions(ms))
+	r.GET("/terraform/modules/v1/:namespace/:name/:system/:version/download", getDownloadPath)
+	r.GET("/download/:filename", downloadModule)
+	r.GET("/modules/:namespace/:name/:system/:version", uploadModule(&ms, dm))
+
+	log.Fatal(r.Run())
+}
+
+func getServiceDiscovery(c *gin.Context) {
+	c.Header("Content-Type", "application/json")
 
 	type serviceDiscovery struct {
 		ModulePath string `json:"modules.v1"`
 	}
 
-	json.NewEncoder(w).Encode(serviceDiscovery{
+	err := json.NewEncoder(c.Writer).Encode(serviceDiscovery{
 		ModulePath: "/terraform/modules/v1/",
 	})
-}
 
-func listAvailableVersions(ms *modules.Modules) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		namespace := vars["namespace"]
-		system := vars["system"]
-		name := vars["name"]
-
-		type Version struct {
-			Version string `json:"version"`
-		}
-		var availableVersions []Version
-
-		for _, m := range ms.Modules {
-			if m.Namespace == namespace && m.System == system && m.Name == name {
-				availableVersions = append(availableVersions, Version{Version: m.Version})
-			}
-		}
-
-		p := struct {
-			Modules []struct {
-				Versions []Version `json:"versions"`
-			} `json:"modules"`
-		}{
-			Modules: []struct {
-				Versions []Version `json:"versions"`
-			}{
-				{
-					Versions: availableVersions,
-				},
-			},
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		err := json.NewEncoder(w).Encode(p)
-		if err != nil {
-			log.Println(err)
-		}
+	if err != nil {
+		log.Fatal(err)
 	}
 }
 
-func getDownloadPath(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	var downloadPath = fmt.Sprintf("/modules/%s.%s.%s.%s.tar.gz", vars["namespace"], vars["name"], vars["system"], vars["version"])
-	w.Header().Set("X-Terraform-Get", downloadPath)
-	w.WriteHeader(204)
+func listAvailableVersions(ms modules.Modules) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		moduleProtocol := moduleprotocol.New(ms.GetModules())
+		namespace := c.Param("namespace")
+		system := c.Param("system")
+		name := c.Param("name")
+
+		c.JSON(http.StatusOK, moduleProtocol.AvailableVersions(
+			namespace,
+			system,
+			name,
+		))
+	}
 }
 
-func uploadModule(ms *modules.Modules, dm datamanager.DataManager) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			w.WriteHeader(405)
-			_, err := w.Write([]byte("Method Not Allowed"))
-			if err != nil {
-				log.Println(err)
-			}
-			return
-		}
+func getDownloadPath(c *gin.Context) {
+	var downloadPath = fmt.Sprintf("/download/%s.%s.%s.%s.tar.gz", c.Param("namespace"), c.Param("name"), c.Param("system"), c.Param("version"))
+	c.Header("X-Terraform-Get", downloadPath)
+	c.Status(204)
+}
 
-		vars := mux.Vars(r)
-
-		m := modules.Module{
-			Namespace: vars["namespace"],
-			Name:      vars["name"],
-			System:    vars["system"],
-			Version:   vars["version"],
+func uploadModule(ms *modules.Modules, dm datamanager.DataManager) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		m := module.Module{
+			Namespace: c.Param("namespace"),
+			Name:      c.Param("name"),
+			System:    c.Param("system"),
+			Version:   c.Param("version"),
 		}
 		var err = m.Validate()
 
@@ -109,84 +95,32 @@ func uploadModule(ms *modules.Modules, dm datamanager.DataManager) func(w http.R
 			MaxUploadSize: maxUploadSize,
 			DataDir:       dataDir,
 		})
-		err = u.Upload(r, m)
+
+		err = u.Upload(c.Request, m)
 
 		if err != nil {
-			log.Println(err)
-			return
+			log.Fatal(err)
 		}
 
 		ms.Add(m)
-		err = dm.Save()
-
-		log.Println(ms)
+		err = dm.Persist(*ms)
 
 		if err != nil {
-			log.Println(err)
+			log.Fatal(err)
 		}
 	}
 }
 
-func downloadModule(ms *modules.Modules) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		d := downloader.New(&downloader.Config{
-			DataDir: dataDir,
-		})
-
-		fn := vars["fileName"]
-
-		//if !ms.Exists(m) {
-		//	w.WriteHeader(404)
-		//	_, err := w.Write([]byte("File not found."))
-		//
-		//	if err != nil {
-		//		log.Println(err)
-		//	}
-		//	return
-		//}
-
-		err := d.Download(w, r, fn)
-
-		if err != nil {
-			log.Println(err)
-			return
-		}
-	}
-}
-
-func main() {
-	if dataDir == "" {
-		dataDir = "/.privateterraformregistry/data"
-	}
-
-	ms := modules.Modules{}
-	var dm = datamanager.New(&datamanager.Config{
+func downloadModule(c *gin.Context) {
+	d := downloader.New(&downloader.Config{
 		DataDir: dataDir,
-	}, &ms)
-
-	var err = dm.Load()
-
-	if err != nil {
-		log.Println(err)
-	}
-
-	router := mux.NewRouter().StrictSlash(true)
-
-	// Request Logging
-	router.Use(func(nxt http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			log.Println(r.RequestURI)
-			nxt.ServeHTTP(w, r)
-		})
 	})
 
-	router.HandleFunc("/.well-known/terraform.json", getServiceDiscovery)                                       // terraform protocol
-	router.HandleFunc("/terraform/modules/v1/{namespace}/{name}/{system}/versions", listAvailableVersions(&ms)) // terraform module protocol
-	router.HandleFunc("/terraform/modules/v1/{namespace}/{name}/{system}/{version}/download", getDownloadPath)  // terraform module protocol
-	router.HandleFunc("/modules/{namespace}/{name}/{system}/{version}", uploadModule(&ms, dm))
-	router.HandleFunc("/modules/{fileName}", downloadModule(&ms))
+	fn := c.Param("filename")
 
-	log.Print("Server Ready")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	err := d.Download(c.Writer, c.Request, fn)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }

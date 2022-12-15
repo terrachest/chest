@@ -1,4 +1,4 @@
-package downloader
+package module
 
 import "testing"
 
