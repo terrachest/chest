@@ -2,9 +2,12 @@ package env
 
 import "os"
 
-func Get(key string, fallback string) string {
-	if os.Getenv(key) == "" {
-		return fallback
+func Get(k string, dfault ...string) string {
+	if os.Getenv(k) == "" {
+		if len(dfault) > 0 {
+			return dfault[0]
+		}
+		return ""
 	}
-	return os.Getenv(key)
+	return os.Getenv(k)
 }

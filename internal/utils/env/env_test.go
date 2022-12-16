@@ -1,7 +1,25 @@
 package env
 
-import "testing"
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
-func TestNoop(t *testing.T) {
-	// do nothing
+func TestGetReturnsSetEnvironmentVariable(t *testing.T) {
+	t.Setenv("foo", "bar")
+	sut := Get("foo")
+
+	assert.Equal(t, sut, "bar")
+}
+
+func TestGetDefaultsToDefaultValue(t *testing.T) {
+	sut := Get("foo", "bar")
+
+	assert.Equal(t, sut, "bar")
+}
+
+func TestGetReturnsEmptyStringWhenNoDefault(t *testing.T) {
+	sut := Get("foo")
+
+	assert.Equal(t, sut, "")
 }
