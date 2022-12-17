@@ -1,25 +1,25 @@
-package env
+package env_test
 
 import (
-	"github.com/stretchr/testify/assert"
+	"privateterraformregistry/internal/utils/env"
 	"testing"
 )
 
-func TestGetReturnsSetEnvironmentVariable(t *testing.T) {
+func TestGet(t *testing.T) {
 	t.Setenv("foo", "bar")
-	sut := Get("foo")
+	got := env.Get("foo")
+	if got != "bar" {
+		t.Errorf("Expected bar got %s", got)
+	}
 
-	assert.Equal(t, sut, "bar")
-}
+	t.Setenv("foo", "")
+	got = env.Get("foo", "bar")
+	if got != "bar" {
+		t.Errorf("Excpected foo got %s", got)
+	}
 
-func TestGetDefaultsToDefaultValue(t *testing.T) {
-	sut := Get("foo", "bar")
-
-	assert.Equal(t, sut, "bar")
-}
-
-func TestGetReturnsEmptyStringWhenNoDefault(t *testing.T) {
-	sut := Get("foo")
-
-	assert.Equal(t, sut, "")
+	got = env.Get("foo", "")
+	if got != "" {
+		t.Errorf("Excpected empty string got %s", got)
+	}
 }

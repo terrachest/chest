@@ -3,15 +3,21 @@ package modules
 import "privateterraformregistry/internal/module"
 
 type Modules struct {
-	modules []module.Module
+	Modules []module.Module
 }
 
 func (modules *Modules) GetModules() []module.Module {
-	return modules.modules
+	return modules.Modules
+}
+
+func (modules *Modules) Add(m module.Module) {
+	if !modules.Exists(m) {
+		modules.Modules = append(modules.Modules, m)
+	}
 }
 
 func (modules *Modules) Exists(m module.Module) bool {
-	for _, x := range modules.modules {
+	for _, x := range modules.Modules {
 		if x.Namespace == m.Namespace && x.System == m.System && x.Name == m.Name && x.Version == m.Version {
 			return true
 		}
@@ -19,14 +25,8 @@ func (modules *Modules) Exists(m module.Module) bool {
 	return false
 }
 
-func (modules *Modules) Add(m module.Module) {
-	if !modules.Exists(m) {
-		modules.modules = append(modules.modules, m)
-	}
-}
-
 func (modules *Modules) Validate() error {
-	for _, m := range modules.modules {
+	for _, m := range modules.Modules {
 		err := m.Validate()
 		if err != nil {
 			return err
