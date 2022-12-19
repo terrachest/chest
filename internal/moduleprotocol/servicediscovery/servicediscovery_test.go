@@ -1,4 +1,4 @@
-package listavailableversions_test
+package servicediscovery_test
 
 import "testing"
 

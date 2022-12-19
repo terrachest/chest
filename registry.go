@@ -35,8 +35,8 @@ func main() {
 
 	r.GET("/.well-known/terraform.json", getServiceDiscovery)
 	r.GET("/modules/v1/:namespace/:name/:system/versions", listAvailableVersions(&ms))
-	r.GET("/modules/v1/:namespace/:name/:system/:version/download", getDownloadPath)
-	r.GET("/modules/:namespace/:name/:system/:version", downloadModule)
+	r.GET("/modules/v1/:namespace/:name/:system/:version/download", getDownloadPath(&ms))
+	r.GET("/modules/:namespace/:name/:system/:version", downloadModule(&ms))
 	r.POST("/modules/:namespace/:name/:system/:version", uploadModule(&ms, dm))
 
 	log.Fatal(r.Run())
@@ -62,18 +62,42 @@ func listAvailableVersions(ms *modules.Modules) func(c *gin.Context) {
 	}
 }
 
-func getDownloadPath(c *gin.Context) {
-	m := module.Module{
-		Namespace: c.Param("namespace"),
-		Name:      c.Param("name"),
-		System:    c.Param("system"),
-		Version:   c.Param("version"),
-	}
-	m.Validate()
+func getDownloadPath(ms *modules.Modules) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		m := module.Module{
+			Namespace: c.Param("namespace"),
+			Name:      c.Param("name"),
+			System:    c.Param("system"),
+			Version:   c.Param("version"),
+		}
+		m.Validate()
 
-	var downloadPath = fmt.Sprintf("/modules/%s/%s/%s/%s", c.Param("namespace"), c.Param("name"), c.Param("system"), c.Param("version"))
-	c.Header("X-Terraform-Get", downloadPath)
-	c.Status(204)
+		if !ms.Exists(m) {
+			c.AbortWithStatus(404)
+		}
+
+		var downloadPath = fmt.Sprintf("/modules/%s/%s/%s/%s", c.Param("namespace"), c.Param("name"), c.Param("system"), c.Param("version"))
+		c.Header("X-Terraform-Get", downloadPath)
+		c.Status(204)
+	}
+}
+
+func downloadModule(ms *modules.Modules) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		m := module.Module{
+			Namespace: c.Param("namespace"),
+			Name:      c.Param("name"),
+			System:    c.Param("system"),
+			Version:   c.Param("version"),
+		}
+		m.Validate()
+
+		if !ms.Exists(m) {
+			c.AbortWithStatus(404)
+		}
+
+		c.FileAttachment(dataDir, m.GetFileName())
+	}
 }
 
 func uploadModule(ms *modules.Modules, dm datamanager.DataManager) func(c *gin.Context) {
@@ -100,16 +124,4 @@ func uploadModule(ms *modules.Modules, dm datamanager.DataManager) func(c *gin.C
 			log.Fatal(err)
 		}
 	}
-}
-
-func downloadModule(c *gin.Context) {
-	m := module.Module{
-		Namespace: c.Param("namespace"),
-		Name:      c.Param("name"),
-		System:    c.Param("system"),
-		Version:   c.Param("version"),
-	}
-	m.Validate()
-
-	c.FileAttachment(dataDir, m.GetFileName())
 }
