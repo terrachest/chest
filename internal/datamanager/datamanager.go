@@ -39,10 +39,6 @@ func (manager *dataManager) Load(ms *modules.Modules) error {
 		return err
 	}
 
-	if data == nil {
-		return nil
-	}
-
 	return json.Unmarshal(data, ms)
 }
 

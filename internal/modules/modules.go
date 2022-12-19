@@ -25,12 +25,8 @@ func (modules *Modules) Exists(m module.Module) bool {
 	return false
 }
 
-func (modules *Modules) Validate() error {
+func (modules *Modules) Validate() {
 	for _, m := range modules.Modules {
-		err := m.Validate()
-		if err != nil {
-			return err
-		}
+		m.Validate()
 	}
-	return nil
 }

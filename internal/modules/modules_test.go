@@ -35,7 +35,7 @@ func TestAdd(t *testing.T) {
 	})
 
 	if len(ms.GetModules()) != 1 {
-		t.Errorf("Wanted length of modules to be 1 got %d", len(ms.GetModules()))
+		t.Errorf("Expected length of modules to be 1 got %d", len(ms.GetModules()))
 	}
 
 	ms.Add(module.Module{
@@ -46,7 +46,7 @@ func TestAdd(t *testing.T) {
 	})
 
 	if len(ms.GetModules()) != 1 {
-		t.Errorf("Wanted length of modules to be 1 got %d", len(ms.GetModules()))
+		t.Errorf("Expected length of modules to be 1 got %d", len(ms.GetModules()))
 	}
 
 	ms.Add(module.Module{
@@ -57,7 +57,7 @@ func TestAdd(t *testing.T) {
 	})
 
 	if len(ms.GetModules()) != 2 {
-		t.Errorf("Wanted length of modules to be 2 got %d", len(ms.GetModules()))
+		t.Errorf("Expected length of modules to be 2 got %d", len(ms.GetModules()))
 	}
 }
 
@@ -89,6 +89,6 @@ func TestExists(t *testing.T) {
 	})
 
 	if moduleExists {
-		t.Error("expected moduleExists to be false got true")
+		t.Error("Expected moduleExists to be false got true")
 	}
 }

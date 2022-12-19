@@ -3,10 +3,12 @@ package moduleprotocol
 import (
 	"privateterraformregistry/internal/module"
 	"privateterraformregistry/internal/moduleprotocol/listavailableversions"
+	"privateterraformregistry/internal/moduleprotocol/servicediscovery"
 )
 
 type ModuleProtocol interface {
 	AvailableVersions(namespace string, system string, name string) listavailableversions.AvailableVersions
+	ServiceDiscovery() servicediscovery.ServiceDiscovery
 }
 
 func New(modules []module.Module) ModuleProtocol {
@@ -17,6 +19,12 @@ func New(modules []module.Module) ModuleProtocol {
 
 type moduleProtocol struct {
 	modules []module.Module
+}
+
+func (protocol *moduleProtocol) ServiceDiscovery() servicediscovery.ServiceDiscovery {
+	return servicediscovery.ServiceDiscovery{
+		ModulePath: "/modules/v1/",
+	}
 }
 
 func (protocol *moduleProtocol) AvailableVersions(
