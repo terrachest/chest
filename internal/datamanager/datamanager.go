@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"privateterraformregistry/internal/modules"
+	"github.com/terrachest/server/internal/modules"
 )
 
 const (

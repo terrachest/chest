@@ -2,17 +2,19 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"privateterraformregistry/internal/datamanager"
-	"privateterraformregistry/internal/module"
-	"privateterraformregistry/internal/moduleprotocol"
-	"privateterraformregistry/internal/modules"
-	"privateterraformregistry/internal/utils/env"
+
+	"github.com/terrachest/server/internal/datamanager"
+	"github.com/terrachest/server/internal/module"
+	"github.com/terrachest/server/internal/moduleprotocol"
+	"github.com/terrachest/server/internal/modules"
+	"github.com/terrachest/server/internal/utils/env"
+
+	"github.com/gin-gonic/gin"
 )
 
-var dataDir = env.Get("DATA_DIR", "/.privateterraformregistry/data")
+var dataDir = env.Get("DATA_DIR", "/.terrachest/data")
 
 const (
 	maxUploadSize = 32 << 20

@@ -1,10 +1,12 @@
 package modules_test
 
 import (
-	"github.com/google/go-cmp/cmp"
-	"privateterraformregistry/internal/module"
-	"privateterraformregistry/internal/modules"
 	"testing"
+
+	"github.com/terrachest/server/internal/module"
+	"github.com/terrachest/server/internal/modules"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func TestGetModules(t *testing.T) {

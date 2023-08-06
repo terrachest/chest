@@ -1,8 +1,9 @@
 package env_test
 
 import (
-	"privateterraformregistry/internal/utils/env"
 	"testing"
+
+	"github.com/terrachest/server/internal/utils/env"
 )
 
 func TestGet(t *testing.T) {

@@ -1,9 +1,9 @@
 package moduleprotocol
 
 import (
-	"privateterraformregistry/internal/module"
-	"privateterraformregistry/internal/moduleprotocol/listavailableversions"
-	"privateterraformregistry/internal/moduleprotocol/servicediscovery"
+	"github.com/terrachest/server/internal/module"
+	"github.com/terrachest/server/internal/moduleprotocol/listavailableversions"
+	"github.com/terrachest/server/internal/moduleprotocol/servicediscovery"
 )
 
 type ModuleProtocol interface {

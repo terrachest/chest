@@ -1,5 +1,6 @@
 .idea
 
+todo.md
 testdata/*
 data/*
 !.gitkeep
