@@ -1,9 +1,9 @@
 package moduleprotocol
 
 import (
-	"github.com/terrachest/server/internal/module"
-	"github.com/terrachest/server/internal/moduleprotocol/listavailableversions"
-	"github.com/terrachest/server/internal/moduleprotocol/servicediscovery"
+	"github.com/terrachest/chest/internal/module"
+	"github.com/terrachest/chest/internal/moduleprotocol/listavailableversions"
+	"github.com/terrachest/chest/internal/moduleprotocol/servicediscovery"
 )
 
 type ModuleProtocol interface {

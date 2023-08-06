@@ -3,8 +3,8 @@ package modules_test
 import (
 	"testing"
 
-	"github.com/terrachest/server/internal/module"
-	"github.com/terrachest/server/internal/modules"
+	"github.com/terrachest/chest/internal/module"
+	"github.com/terrachest/chest/internal/modules"
 
 	"github.com/google/go-cmp/cmp"
 )

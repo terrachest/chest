@@ -9,10 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-cmp/cmp"
 
-	"github.com/terrachest/server/internal/module"
-	"github.com/terrachest/server/internal/moduleprotocol/listavailableversions"
-	"github.com/terrachest/server/internal/moduleprotocol/servicediscovery"
-	"github.com/terrachest/server/internal/modules"
+	"github.com/terrachest/chest/internal/module"
+	"github.com/terrachest/chest/internal/moduleprotocol/listavailableversions"
+	"github.com/terrachest/chest/internal/moduleprotocol/servicediscovery"
+	"github.com/terrachest/chest/internal/modules"
 )
 
 func TestGetServiceDiscovery(t *testing.T) {

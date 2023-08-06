@@ -3,7 +3,7 @@ package env_test
 import (
 	"testing"
 
-	"github.com/terrachest/server/internal/utils/env"
+	"github.com/terrachest/chest/internal/utils/env"
 )
 
 func TestGet(t *testing.T) {
