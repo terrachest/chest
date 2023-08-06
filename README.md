@@ -1,4 +1,4 @@
-# Terra Chest
+# Terrachest
 
 <h3 align="center">Self Hosted Terraform Registry</h3>
 <p align="center">
