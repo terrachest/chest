@@ -2,15 +2,17 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/gin"
-	"github.com/google/go-cmp/cmp"
 	"net/http"
 	"net/http/httptest"
-	"privateterraformregistry/internal/module"
-	"privateterraformregistry/internal/moduleprotocol/listavailableversions"
-	"privateterraformregistry/internal/moduleprotocol/servicediscovery"
-	"privateterraformregistry/internal/modules"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/go-cmp/cmp"
+
+	"github.com/terrachest/server/internal/module"
+	"github.com/terrachest/server/internal/moduleprotocol/listavailableversions"
+	"github.com/terrachest/server/internal/moduleprotocol/servicediscovery"
+	"github.com/terrachest/server/internal/modules"
 )
 
 func TestGetServiceDiscovery(t *testing.T) {

@@ -1,6 +1,6 @@
 package modules
 
-import "privateterraformregistry/internal/module"
+import "github.com/terrachest/server/internal/module"
 
 type Modules struct {
 	Modules []module.Module
