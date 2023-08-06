@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-    <a href="#"><img src="https://github.com/terrachest/terrachest/actions/workflows/go.yml/badge.svg" /></a>
+    <a href="#"><img src="https://github.com/terrachest/chest/actions/workflows/go.yml/badge.svg" /></a>
 </p>
 
 ## Features
