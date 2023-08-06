@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/terrachest/server/internal/datamanager"
-	"github.com/terrachest/server/internal/module"
-	"github.com/terrachest/server/internal/moduleprotocol"
-	"github.com/terrachest/server/internal/modules"
-	"github.com/terrachest/server/internal/utils/env"
+	"github.com/terrachest/chest/internal/datamanager"
+	"github.com/terrachest/chest/internal/module"
+	"github.com/terrachest/chest/internal/moduleprotocol"
+	"github.com/terrachest/chest/internal/modules"
+	"github.com/terrachest/chest/internal/utils/env"
 
 	"github.com/gin-gonic/gin"
 )

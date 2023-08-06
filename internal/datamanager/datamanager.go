@@ -5,7 +5,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/terrachest/server/internal/modules"
+	"github.com/terrachest/chest/internal/modules"
 )
 
 const (

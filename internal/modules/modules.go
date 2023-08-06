@@ -1,6 +1,6 @@
 package modules
 
-import "github.com/terrachest/server/internal/module"
+import "github.com/terrachest/chest/internal/module"
 
 type Modules struct {
 	Modules []module.Module
